@@ -48,7 +48,8 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new RuntimeException("Invalid credentials"));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
