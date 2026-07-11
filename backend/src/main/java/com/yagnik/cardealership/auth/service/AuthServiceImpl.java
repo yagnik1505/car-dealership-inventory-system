@@ -8,6 +8,8 @@ import com.yagnik.cardealership.auth.entity.Role;
 import com.yagnik.cardealership.auth.entity.User;
 import com.yagnik.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.yagnik.cardealership.auth.repository.UserRepository;
+import com.yagnik.cardealership.auth.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,15 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public AuthServiceImpl(UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,AuthenticationManager auther, JwtService jwt) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = auther;
+        this.jwtService = jwt;
     }
 
     @Override

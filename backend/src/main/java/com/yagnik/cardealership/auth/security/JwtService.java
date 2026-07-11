@@ -12,18 +12,28 @@ import java.util.Date;
 public class JwtService {
 
     private static final String SECRET =
-            "mySuperSecretKeyForJwtGeneration12345678901234567890";
+            "mySecretKeyForJwtAuthentication12345678901234567890";
 
     private final SecretKey key =
-            Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+            Keys.hmacShaKeyFor(
+                    SECRET.getBytes(StandardCharsets.UTF_8));
 
     public String generateToken(String email) {
 
         return Jwts.builder()
+
                 .subject(email)
+
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 86400000))
+
+                .expiration(
+                        new Date(System.currentTimeMillis()
+                                + 1000 * 60 * 60 * 24)
+                )
+
                 .signWith(key)
+
                 .compact();
     }
+
 }

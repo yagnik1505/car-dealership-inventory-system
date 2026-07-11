@@ -7,12 +7,14 @@ import com.yagnik.cardealership.auth.dto.RegisterResponse;
 import com.yagnik.cardealership.auth.entity.User;
 import com.yagnik.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.yagnik.cardealership.auth.repository.UserRepository;
+import com.yagnik.cardealership.auth.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -38,6 +40,12 @@ class AuthServiceImplTest {
 
     @InjectMocks
     private AuthServiceImpl authService;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private JwtService jwtService;
 
     @Test
     void shouldSaveUserAndReturnSuccessResponse() {
@@ -240,5 +248,38 @@ class AuthServiceImplTest {
 
         verify(authenticationManager)
                 .authenticate(any());
+    }
+
+    @Test
+    void shouldReturnJwtTokenAfterSuccessfulLogin() {
+
+        LoginRequest request = LoginRequest.builder()
+                .email("john@example.com")
+                .password("Password@123")
+                .build();
+
+        User user = User.builder()
+                .email("john@example.com")
+                .password("encodedPassword")
+                .build();
+
+        when(userRepository.findByEmail(request.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()))
+                .thenReturn(true);
+
+        when(jwtService.generateToken(request.getEmail()))
+                .thenReturn("jwt-token");
+
+        LoginResponse response = authService.login(request);
+
+        assertEquals("Login successful", response.getMessage());
+
+        assertEquals("jwt-token", response.getToken());
+
+        verify(jwtService).generateToken(request.getEmail());
     }
 }
