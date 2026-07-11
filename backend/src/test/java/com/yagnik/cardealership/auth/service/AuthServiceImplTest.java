@@ -7,9 +7,11 @@ import com.yagnik.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.yagnik.cardealership.auth.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,6 +22,9 @@ class AuthServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -42,11 +47,7 @@ class AuthServiceImplTest {
         RegisterResponse response = authService.register(request);
 
         assertNotNull(response);
-
-        assertEquals(
-                "User registered successfully",
-                response.getMessage()
-        );
+        assertEquals("User registered successfully", response.getMessage());
 
         verify(userRepository, times(1))
                 .save(any(User.class));
@@ -69,12 +70,37 @@ class AuthServiceImplTest {
                 () -> authService.register(request)
         );
 
-        assertEquals(
-                "Email already exists",
-                exception.getMessage()
-        );
+        assertEquals("Email already exists", exception.getMessage());
 
         verify(userRepository, never())
                 .save(any(User.class));
+    }
+
+    @Test
+    void shouldEncryptPasswordBeforeSavingUser() {
+
+        RegisterRequest request = RegisterRequest.builder()
+                .name("John Doe")
+                .email("john@example.com")
+                .password("password123")
+                .build();
+
+        when(userRepository.existsByEmail(request.getEmail()))
+                .thenReturn(false);
+
+        when(passwordEncoder.encode(request.getPassword()))
+                .thenReturn("encryptedPassword");
+
+        authService.register(request);
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        verify(userRepository).save(userCaptor.capture());
+
+        User savedUser = userCaptor.getValue();
+
+        assertEquals("encryptedPassword", savedUser.getPassword());
+
+        verify(passwordEncoder).encode("password123");
     }
 }
