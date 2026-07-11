@@ -12,4 +12,5 @@ public interface VehicleService {
     VehicleResponse getVehicleById(Long id);
     VehicleResponse updateVehicle(Long id, VehicleRequest request);
     void deleteVehicle(Long id);
+    List<VehicleResponse> searchByMake(String make);
 }

@@ -242,4 +242,39 @@ class VehicleServiceImplTest {
         verify(vehicleRepository).findById(1L);
         verify(vehicleRepository).delete(vehicle);
     }
+
+    @Test
+    void shouldReturnVehiclesByMake() {
+
+        Vehicle vehicle1 = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        Vehicle vehicle2 = Vehicle.builder()
+                .id(2L)
+                .make("Toyota")
+                .model("Innova")
+                .category("MPV")
+                .price(new BigDecimal("2800000"))
+                .quantityInStock(3)
+                .build();
+
+        when(vehicleRepository.findByMakeIgnoreCase("Toyota"))
+                .thenReturn(List.of(vehicle1, vehicle2));
+
+        List<VehicleResponse> response =
+                vehicleService.searchByMake("Toyota");
+
+        assertEquals(2, response.size());
+
+        assertEquals("Fortuner", response.get(0).getModel());
+        assertEquals("Innova", response.get(1).getModel());
+
+        verify(vehicleRepository).findByMakeIgnoreCase("Toyota");
+    }
 }
