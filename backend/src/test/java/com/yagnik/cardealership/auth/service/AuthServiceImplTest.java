@@ -151,4 +151,29 @@ class AuthServiceImplTest {
                 user.getPassword()
         );
     }
+
+    @Test
+    void shouldThrowExceptionWhenEmailDoesNotExist() {
+
+        LoginRequest request = LoginRequest.builder()
+                .email("unknown@example.com")
+                .password("Password@123")
+                .build();
+
+        when(userRepository.findByEmail(request.getEmail()))
+                .thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> authService.login(request)
+        );
+
+        assertEquals(
+                "Invalid credentials",
+                exception.getMessage()
+        );
+
+        verify(passwordEncoder, never())
+                .matches(anyString(), anyString());
+    }
 }
