@@ -16,6 +16,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
-        return null;
+
+        return RegisterResponse.builder()
+                .message("User registered successfully")
+                .build();
     }
 }
