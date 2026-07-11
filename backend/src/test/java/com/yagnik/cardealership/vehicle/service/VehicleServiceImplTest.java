@@ -3,6 +3,7 @@ package com.yagnik.cardealership.vehicle.service;
 import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.entity.Vehicle;
+import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
 import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,5 +58,70 @@ class VehicleServiceImplTest {
         assertEquals("Fortuner", response.getModel());
 
         verify(vehicleRepository).save(any(Vehicle.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenVehicleAlreadyExists() {
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.existsByMakeAndModelAndCategory(
+                request.getMake(),
+                request.getModel(),
+                request.getCategory()))
+                .thenReturn(true);
+
+        DuplicateVehicleException exception = assertThrows(
+                DuplicateVehicleException.class,
+                () -> vehicleService.addVehicle(request)
+        );
+
+        assertEquals(
+                "Vehicle already exists",
+                exception.getMessage()
+        );
+
+        verify(vehicleRepository, never())
+                .save(any(Vehicle.class));
+    }
+
+    @Test
+    void shouldReturnAllVehicles() {
+
+        Vehicle vehicle1 = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        Vehicle vehicle2 = Vehicle.builder()
+                .id(2L)
+                .make("Honda")
+                .model("City")
+                .category("Sedan")
+                .price(new BigDecimal("1500000"))
+                .quantityInStock(3)
+                .build();
+
+        when(vehicleRepository.findAll())
+                .thenReturn(List.of(vehicle1, vehicle2));
+
+        List<VehicleResponse> response = vehicleService.getAllVehicles();
+
+        assertEquals(2, response.size());
+
+        assertEquals("Toyota", response.get(0).getMake());
+        assertEquals("Honda", response.get(1).getMake());
+
+        verify(vehicleRepository).findAll();
     }
 }

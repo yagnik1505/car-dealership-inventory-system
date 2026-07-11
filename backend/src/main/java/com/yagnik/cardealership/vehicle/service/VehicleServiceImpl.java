@@ -3,6 +3,7 @@ package com.yagnik.cardealership.vehicle.service;
 import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.entity.Vehicle;
+import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
 import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,14 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public VehicleResponse addVehicle(VehicleRequest request) {
+
+        if (vehicleRepository.existsByMakeAndModelAndCategory(
+                request.getMake(),
+                request.getModel(),
+                request.getCategory())) {
+
+            throw new DuplicateVehicleException("Vehicle already exists");
+        }
 
         Vehicle vehicle = Vehicle.builder()
                 .make(request.getMake())
