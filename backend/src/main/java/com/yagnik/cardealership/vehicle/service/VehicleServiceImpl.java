@@ -1,0 +1,38 @@
+package com.yagnik.cardealership.vehicle.service;
+
+import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
+import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
+import com.yagnik.cardealership.vehicle.entity.Vehicle;
+import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class VehicleServiceImpl implements VehicleService {
+
+    private final VehicleRepository vehicleRepository;
+
+    @Override
+    public VehicleResponse addVehicle(VehicleRequest request) {
+
+        Vehicle vehicle = Vehicle.builder()
+                .make(request.getMake())
+                .model(request.getModel())
+                .category(request.getCategory())
+                .price(request.getPrice())
+                .quantityInStock(request.getQuantityInStock())
+                .build();
+
+        Vehicle savedVehicle = vehicleRepository.save(vehicle);
+
+        return VehicleResponse.builder()
+                .id(savedVehicle.getId())
+                .make(savedVehicle.getMake())
+                .model(savedVehicle.getModel())
+                .category(savedVehicle.getCategory())
+                .price(savedVehicle.getPrice())
+                .quantityInStock(savedVehicle.getQuantityInStock())
+                .build();
+    }
+}
