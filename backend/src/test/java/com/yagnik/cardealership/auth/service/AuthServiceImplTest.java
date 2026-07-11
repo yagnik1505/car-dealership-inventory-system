@@ -1,5 +1,7 @@
 package com.yagnik.cardealership.auth.service;
 
+import com.yagnik.cardealership.auth.dto.LoginRequest;
+import com.yagnik.cardealership.auth.dto.LoginResponse;
 import com.yagnik.cardealership.auth.dto.RegisterRequest;
 import com.yagnik.cardealership.auth.dto.RegisterResponse;
 import com.yagnik.cardealership.auth.entity.User;
@@ -12,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -108,5 +112,43 @@ class AuthServiceImplTest {
         assertEquals("encryptedPassword", savedUser.getPassword());
 
         verify(passwordEncoder).encode("password123");
+    }
+
+    // cases for login
+
+    @Test
+    void shouldLoginSuccessfully() {
+
+        LoginRequest request = LoginRequest.builder()
+                .email("john@example.com")
+                .password("Password@123")
+                .build();
+
+        User user = User.builder()
+                .email("john@example.com")
+                .password("encodedPassword")
+                .build();
+
+        when(userRepository.findByEmail(request.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()))
+                .thenReturn(true);
+
+        LoginResponse response = authService.login(request);
+
+        assertNotNull(response);
+
+        assertEquals(
+                "Login successful",
+                response.getMessage()
+        );
+
+        verify(passwordEncoder).matches(
+                request.getPassword(),
+                user.getPassword()
+        );
     }
 }
