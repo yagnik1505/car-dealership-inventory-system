@@ -107,4 +107,14 @@ public class VehicleServiceImpl implements VehicleService {
                 .quantityInStock(updatedVehicle.getQuantityInStock())
                 .build();
     }
+
+    @Override
+    public void deleteVehicle(Long id) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        vehicleRepository.delete(vehicle);
+    }
 }
