@@ -9,6 +9,7 @@ import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -132,5 +133,44 @@ public class VehicleServiceImpl implements VehicleService {
                         .quantityInStock(vehicle.getQuantityInStock())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public List<VehicleResponse> searchByCategory(String category) {
+
+        return vehicleRepository.findByCategoryIgnoreCase(category)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<VehicleResponse> searchByModel(String model) {
+
+        return vehicleRepository.findByModelIgnoreCase(model)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<VehicleResponse> searchByPriceRange(BigDecimal minPrice,BigDecimal maxPrice) {
+
+        return vehicleRepository.findByPriceBetween(minPrice, maxPrice)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private VehicleResponse mapToResponse(Vehicle vehicle) {
+
+        return VehicleResponse.builder()
+                .id(vehicle.getId())
+                .make(vehicle.getMake())
+                .model(vehicle.getModel())
+                .category(vehicle.getCategory())
+                .price(vehicle.getPrice())
+                .quantityInStock(vehicle.getQuantityInStock())
+                .build();
     }
 }
