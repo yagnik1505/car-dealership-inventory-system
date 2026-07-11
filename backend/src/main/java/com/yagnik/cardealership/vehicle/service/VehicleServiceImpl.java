@@ -81,4 +81,30 @@ public class VehicleServiceImpl implements VehicleService {
                 .quantityInStock(vehicle.getQuantityInStock())
                 .build();
     }
+
+    @Override
+    public VehicleResponse updateVehicle(Long id,
+                                         VehicleRequest request) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        vehicle.setMake(request.getMake());
+        vehicle.setModel(request.getModel());
+        vehicle.setCategory(request.getCategory());
+        vehicle.setPrice(request.getPrice());
+        vehicle.setQuantityInStock(request.getQuantityInStock());
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return VehicleResponse.builder()
+                .id(updatedVehicle.getId())
+                .make(updatedVehicle.getMake())
+                .model(updatedVehicle.getModel())
+                .category(updatedVehicle.getCategory())
+                .price(updatedVehicle.getPrice())
+                .quantityInStock(updatedVehicle.getQuantityInStock())
+                .build();
+    }
 }
