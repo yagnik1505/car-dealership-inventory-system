@@ -277,4 +277,86 @@ class VehicleServiceImplTest {
 
         verify(vehicleRepository).findByMakeIgnoreCase("Toyota");
     }
+
+    @Test
+    void shouldReturnVehiclesByCategory() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.findByCategoryIgnoreCase("SUV"))
+                .thenReturn(List.of(vehicle));
+
+        List<VehicleResponse> response =
+                vehicleService.searchByCategory("SUV");
+
+        assertEquals(1, response.size());
+        assertEquals("SUV", response.get(0).getCategory());
+
+        verify(vehicleRepository)
+                .findByCategoryIgnoreCase("SUV");
+    }
+
+    @Test
+    void shouldReturnVehiclesByModel() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.findByModelIgnoreCase("Fortuner"))
+                .thenReturn(List.of(vehicle));
+
+        List<VehicleResponse> response =
+                vehicleService.searchByModel("Fortuner");
+
+        assertEquals(1, response.size());
+        assertEquals("Fortuner", response.get(0).getModel());
+
+        verify(vehicleRepository)
+                .findByModelIgnoreCase("Fortuner");
+    }
+
+    @Test
+    void shouldReturnVehiclesWithinPriceRange() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.findByPriceBetween(
+                new BigDecimal("4000000"),
+                new BigDecimal("4500000")))
+                .thenReturn(List.of(vehicle));
+
+        List<VehicleResponse> response =
+                vehicleService.searchByPriceRange(
+                        new BigDecimal("4000000"),
+                        new BigDecimal("4500000"));
+
+        assertEquals(1, response.size());
+        assertEquals(
+                new BigDecimal("4200000"),
+                response.get(0).getPrice());
+
+        verify(vehicleRepository).findByPriceBetween(
+                new BigDecimal("4000000"),
+                new BigDecimal("4500000"));
+    }
 }

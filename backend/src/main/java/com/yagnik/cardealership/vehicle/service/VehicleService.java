@@ -3,6 +3,7 @@ package com.yagnik.cardealership.vehicle.service;
 import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface VehicleService {
@@ -13,4 +14,10 @@ public interface VehicleService {
     VehicleResponse updateVehicle(Long id, VehicleRequest request);
     void deleteVehicle(Long id);
     List<VehicleResponse> searchByMake(String make);
+
+    List<VehicleResponse> searchByCategory(String category);
+
+    List<VehicleResponse> searchByModel(String model);
+
+    List<VehicleResponse> searchByPriceRange(BigDecimal minPrice,BigDecimal maxPrice);
 }
