@@ -219,4 +219,27 @@ class VehicleServiceImplTest {
         verify(vehicleRepository).findById(1L);
         verify(vehicleRepository).save(any(Vehicle.class));
     }
+
+    @Test
+    void shouldDeleteVehicleSuccessfully() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        doNothing().when(vehicleRepository).delete(vehicle);
+
+        vehicleService.deleteVehicle(1L);
+
+        verify(vehicleRepository).findById(1L);
+        verify(vehicleRepository).delete(vehicle);
+    }
 }
