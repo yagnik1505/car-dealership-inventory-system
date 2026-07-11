@@ -8,6 +8,8 @@ import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
@@ -43,5 +45,21 @@ public class VehicleServiceImpl implements VehicleService {
                 .price(savedVehicle.getPrice())
                 .quantityInStock(savedVehicle.getQuantityInStock())
                 .build();
+    }
+
+    @Override
+    public List<VehicleResponse> getAllVehicles() {
+
+        return vehicleRepository.findAll()
+                .stream()
+                .map(vehicle -> VehicleResponse.builder()
+                        .id(vehicle.getId())
+                        .make(vehicle.getMake())
+                        .model(vehicle.getModel())
+                        .category(vehicle.getCategory())
+                        .price(vehicle.getPrice())
+                        .quantityInStock(vehicle.getQuantityInStock())
+                        .build())
+                .toList();
     }
 }
