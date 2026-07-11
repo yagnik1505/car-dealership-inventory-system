@@ -117,4 +117,20 @@ public class VehicleServiceImpl implements VehicleService {
 
         vehicleRepository.delete(vehicle);
     }
+
+    @Override
+    public List<VehicleResponse> searchByMake(String make) {
+
+        return vehicleRepository.findByMakeIgnoreCase(make)
+                .stream()
+                .map(vehicle -> VehicleResponse.builder()
+                        .id(vehicle.getId())
+                        .make(vehicle.getMake())
+                        .model(vehicle.getModel())
+                        .category(vehicle.getCategory())
+                        .price(vehicle.getPrice())
+                        .quantityInStock(vehicle.getQuantityInStock())
+                        .build())
+                .toList();
+    }
 }
