@@ -41,6 +41,9 @@ class AuthServiceImplTest {
         when(userRepository.existsByEmail(request.getEmail()))
                 .thenReturn(false);
 
+        when(passwordEncoder.encode(request.getPassword()))
+                .thenReturn("encryptedPassword");
+
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -49,8 +52,8 @@ class AuthServiceImplTest {
         assertNotNull(response);
         assertEquals("User registered successfully", response.getMessage());
 
-        verify(userRepository, times(1))
-                .save(any(User.class));
+        verify(userRepository).save(any(User.class));
+        verify(passwordEncoder).encode(request.getPassword());
     }
 
     @Test
@@ -72,8 +75,8 @@ class AuthServiceImplTest {
 
         assertEquals("Email already exists", exception.getMessage());
 
-        verify(userRepository, never())
-                .save(any(User.class));
+        verify(userRepository, never()).save(any(User.class));
+        verify(passwordEncoder, never()).encode(anyString());
     }
 
     @Test
@@ -88,8 +91,11 @@ class AuthServiceImplTest {
         when(userRepository.existsByEmail(request.getEmail()))
                 .thenReturn(false);
 
-        when(passwordEncoder.encode(request.getPassword()))
+        when(passwordEncoder.encode("password123"))
                 .thenReturn("encryptedPassword");
+
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         authService.register(request);
 
