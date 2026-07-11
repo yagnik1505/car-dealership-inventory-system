@@ -4,6 +4,7 @@ import com.yagnik.cardealership.auth.dto.RegisterRequest;
 import com.yagnik.cardealership.auth.dto.RegisterResponse;
 import com.yagnik.cardealership.auth.entity.Role;
 import com.yagnik.cardealership.auth.entity.User;
+import com.yagnik.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.yagnik.cardealership.auth.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
 
         User user = User.builder()
                 .name(request.getName())

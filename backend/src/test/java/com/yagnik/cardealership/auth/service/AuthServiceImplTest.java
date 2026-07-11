@@ -3,6 +3,7 @@ package com.yagnik.cardealership.auth.service;
 import com.yagnik.cardealership.auth.dto.RegisterRequest;
 import com.yagnik.cardealership.auth.dto.RegisterResponse;
 import com.yagnik.cardealership.auth.entity.User;
+import com.yagnik.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.yagnik.cardealership.auth.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,34 @@ class AuthServiceImplTest {
     private AuthServiceImpl authService;
 
     @Test
+    void shouldSaveUserAndReturnSuccessResponse() {
+
+        RegisterRequest request = RegisterRequest.builder()
+                .name("Yagnik")
+                .email("yagnik@gmail.com")
+                .password("Password@123")
+                .build();
+
+        when(userRepository.existsByEmail(request.getEmail()))
+                .thenReturn(false);
+
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        RegisterResponse response = authService.register(request);
+
+        assertNotNull(response);
+
+        assertEquals(
+                "User registered successfully",
+                response.getMessage()
+        );
+
+        verify(userRepository, times(1))
+                .save(any(User.class));
+    }
+
+    @Test
     void shouldThrowExceptionWhenEmailAlreadyExists() {
 
         RegisterRequest request = RegisterRequest.builder()
@@ -32,11 +61,11 @@ class AuthServiceImplTest {
                 .password("Password@123")
                 .build();
 
-        when(userRepository.existsByEmail("yagnik@gmail.com"))
+        when(userRepository.existsByEmail(request.getEmail()))
                 .thenReturn(true);
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
+        EmailAlreadyExistsException exception = assertThrows(
+                EmailAlreadyExistsException.class,
                 () -> authService.register(request)
         );
 
