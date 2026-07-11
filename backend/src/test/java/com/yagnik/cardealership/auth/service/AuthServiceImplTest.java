@@ -24,7 +24,7 @@ class AuthServiceImplTest {
     private AuthServiceImpl authService;
 
     @Test
-    void shouldSaveUserAndReturnSuccessResponse() {
+    void shouldThrowExceptionWhenEmailAlreadyExists() {
 
         RegisterRequest request = RegisterRequest.builder()
                 .name("Yagnik")
@@ -32,16 +32,20 @@ class AuthServiceImplTest {
                 .password("Password@123")
                 .build();
 
-        RegisterResponse response = authService.register(request);
+        when(userRepository.existsByEmail("yagnik@gmail.com"))
+                .thenReturn(true);
 
-        assertNotNull(response);
-
-        assertEquals(
-                "User registered successfully",
-                response.getMessage()
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> authService.register(request)
         );
 
-        verify(userRepository, times(1))
+        assertEquals(
+                "Email already exists",
+                exception.getMessage()
+        );
+
+        verify(userRepository, never())
                 .save(any(User.class));
     }
 }
