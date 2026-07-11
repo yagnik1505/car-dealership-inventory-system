@@ -8,6 +8,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import io.jsonwebtoken.Claims;
+import org.springframework.security.core.userdetails.UserDetails;
 @Service
 public class JwtService {
 
@@ -49,6 +50,23 @@ public class JwtService {
 
         return extractAllClaims(token)
                 .getSubject();
+    }
+
+    private boolean isTokenExpired(String token) {
+
+        return extractAllClaims(token)
+                .getExpiration()
+                .before(new Date());
+    }
+
+    public boolean isTokenValid(
+            String token,
+            UserDetails userDetails) {
+
+        String username = extractUsername(token);
+
+        return username.equals(userDetails.getUsername())
+                && !isTokenExpired(token);
     }
 
 }
