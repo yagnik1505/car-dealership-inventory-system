@@ -39,14 +39,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
 
-        return VehicleResponse.builder()
-                .id(savedVehicle.getId())
-                .make(savedVehicle.getMake())
-                .model(savedVehicle.getModel())
-                .category(savedVehicle.getCategory())
-                .price(savedVehicle.getPrice())
-                .quantityInStock(savedVehicle.getQuantityInStock())
-                .build();
+        return mapToResponse(savedVehicle);
     }
 
     @Override
@@ -54,17 +47,9 @@ public class VehicleServiceImpl implements VehicleService {
 
         return vehicleRepository.findAll()
                 .stream()
-                .map(vehicle -> VehicleResponse.builder()
-                        .id(vehicle.getId())
-                        .make(vehicle.getMake())
-                        .model(vehicle.getModel())
-                        .category(vehicle.getCategory())
-                        .price(vehicle.getPrice())
-                        .quantityInStock(vehicle.getQuantityInStock())
-                        .build())
+                .map(this::mapToResponse)
                 .toList();
     }
-
 
     @Override
     public VehicleResponse getVehicleById(Long id) {
@@ -73,14 +58,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElseThrow(() ->
                         new VehicleNotFoundException("Vehicle not found"));
 
-        return VehicleResponse.builder()
-                .id(vehicle.getId())
-                .make(vehicle.getMake())
-                .model(vehicle.getModel())
-                .category(vehicle.getCategory())
-                .price(vehicle.getPrice())
-                .quantityInStock(vehicle.getQuantityInStock())
-                .build();
+        return mapToResponse(vehicle);
     }
 
     @Override
@@ -99,14 +77,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         Vehicle updatedVehicle = vehicleRepository.save(vehicle);
 
-        return VehicleResponse.builder()
-                .id(updatedVehicle.getId())
-                .make(updatedVehicle.getMake())
-                .model(updatedVehicle.getModel())
-                .category(updatedVehicle.getCategory())
-                .price(updatedVehicle.getPrice())
-                .quantityInStock(updatedVehicle.getQuantityInStock())
-                .build();
+        return mapToResponse(updatedVehicle);
     }
 
     @Override
@@ -124,14 +95,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         return vehicleRepository.findByMakeIgnoreCase(make)
                 .stream()
-                .map(vehicle -> VehicleResponse.builder()
-                        .id(vehicle.getId())
-                        .make(vehicle.getMake())
-                        .model(vehicle.getModel())
-                        .category(vehicle.getCategory())
-                        .price(vehicle.getPrice())
-                        .quantityInStock(vehicle.getQuantityInStock())
-                        .build())
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -154,7 +118,8 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<VehicleResponse> searchByPriceRange(BigDecimal minPrice,BigDecimal maxPrice) {
+    public List<VehicleResponse> searchByPriceRange(BigDecimal minPrice,
+                                                    BigDecimal maxPrice) {
 
         return vehicleRepository.findByPriceBetween(minPrice, maxPrice)
                 .stream()
