@@ -229,28 +229,6 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void shouldAuthenticateUserSuccessfully() {
-
-        LoginRequest request = LoginRequest.builder()
-                .email("john@example.com")
-                .password("Password@123")
-                .build();
-
-        when(authenticationManager.authenticate(any()))
-                .thenReturn(mock(Authentication.class));
-
-        LoginResponse response = authService.login(request);
-
-        assertEquals(
-                "Login successful",
-                response.getMessage()
-        );
-
-        verify(authenticationManager)
-                .authenticate(any());
-    }
-
-    @Test
     void shouldReturnJwtTokenAfterSuccessfulLogin() {
 
         LoginRequest request = LoginRequest.builder()

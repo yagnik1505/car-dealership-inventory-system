@@ -5,4 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VehicleRepository
         extends JpaRepository<Vehicle, Long> {
+
+    boolean existsByMakeAndModelAndCategory(
+            String make,
+            String model,
+            String category
+    );
 }
