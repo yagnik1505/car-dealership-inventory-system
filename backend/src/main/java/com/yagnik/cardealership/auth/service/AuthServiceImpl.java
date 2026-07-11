@@ -1,5 +1,7 @@
 package com.yagnik.cardealership.auth.service;
 
+import com.yagnik.cardealership.auth.dto.*;
+import com.yagnik.cardealership.auth.dto.LoginResponse;
 import com.yagnik.cardealership.auth.dto.RegisterRequest;
 import com.yagnik.cardealership.auth.dto.RegisterResponse;
 import com.yagnik.cardealership.auth.entity.Role;
@@ -39,6 +41,24 @@ public class AuthServiceImpl implements AuthService {
 
         return RegisterResponse.builder()
                 .message("User registered successfully")
+                .build();
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow();
+
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        return LoginResponse.builder()
+                .message("Login successful")
                 .build();
     }
 }
