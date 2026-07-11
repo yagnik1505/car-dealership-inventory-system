@@ -4,6 +4,7 @@ import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.entity.Vehicle;
 import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
+import com.yagnik.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,5 +62,23 @@ public class VehicleServiceImpl implements VehicleService {
                         .quantityInStock(vehicle.getQuantityInStock())
                         .build())
                 .toList();
+    }
+
+
+    @Override
+    public VehicleResponse getVehicleById(Long id) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        return VehicleResponse.builder()
+                .id(vehicle.getId())
+                .make(vehicle.getMake())
+                .model(vehicle.getModel())
+                .category(vehicle.getCategory())
+                .price(vehicle.getPrice())
+                .quantityInStock(vehicle.getQuantityInStock())
+                .build();
     }
 }

@@ -9,4 +9,6 @@ public interface VehicleService {
 
     VehicleResponse addVehicle(VehicleRequest request);
     List<VehicleResponse> getAllVehicles();
+    VehicleResponse getVehicleById(Long id);
+    VehicleResponse updateVehicle(Long id, VehicleRequest request);
 }
