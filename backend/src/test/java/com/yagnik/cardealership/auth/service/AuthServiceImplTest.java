@@ -13,8 +13,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -175,5 +181,64 @@ class AuthServiceImplTest {
 
         verify(passwordEncoder, never())
                 .matches(anyString(), anyString());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenPasswordIsIncorrect() {
+
+        LoginRequest request = LoginRequest.builder()
+                .email("john@example.com")
+                .password("WrongPassword")
+                .build();
+
+        User user = User.builder()
+                .email("john@example.com")
+                .password("encodedPassword")
+                .build();
+
+        when(userRepository.findByEmail(request.getEmail()))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword()))
+                .thenReturn(false);
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> authService.login(request)
+        );
+
+        assertEquals(
+                "Invalid credentials",
+                exception.getMessage()
+        );
+
+        verify(passwordEncoder).matches(
+                request.getPassword(),
+                user.getPassword()
+        );
+    }
+
+    @Test
+    void shouldAuthenticateUserSuccessfully() {
+
+        LoginRequest request = LoginRequest.builder()
+                .email("john@example.com")
+                .password("Password@123")
+                .build();
+
+        when(authenticationManager.authenticate(any()))
+                .thenReturn(mock(Authentication.class));
+
+        LoginResponse response = authService.login(request);
+
+        assertEquals(
+                "Login successful",
+                response.getMessage()
+        );
+
+        verify(authenticationManager)
+                .authenticate(any());
     }
 }
