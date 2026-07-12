@@ -39,4 +39,21 @@ public class VehicleController {
 
         return ResponseEntity.ok(vehicleService.getVehicleById(id));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VehicleResponse> updateVehicle(
+            @PathVariable Long id,
+            @Valid @RequestBody VehicleRequest request) {
+
+        return ResponseEntity.ok(vehicleService.updateVehicle(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
+
+        vehicleService.deleteVehicle(id);
+        return ResponseEntity.noContent().build();
+    }
 }
+
+//feat(vehicle): implement update vehicle endpoint

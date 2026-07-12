@@ -25,7 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @WebMvcTest(VehicleController.class)
 @Import(SecurityConfig.class)
@@ -189,6 +190,17 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$.category").value("SUV"))
                 .andExpect(jsonPath("$.price").value(4500000))
                 .andExpect(jsonPath("$.quantityInStock").value(8));
+    }
+
+    @Test
+    @WithMockUser
+    void shouldDeleteVehicleSuccessfully() throws Exception {
+
+        doNothing().when(vehicleService).deleteVehicle(1L);
+
+        mockMvc.perform(delete("/api/vehicles/1")
+                        .with(csrf()))
+                .andExpect(status().isNoContent());
     }
 }
 
