@@ -13,7 +13,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.ArgumentMatchers.eq;
 import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -127,6 +128,68 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$[1].make").value("Honda"));
     }
 
+    @Test
+    @WithMockUser
+    void shouldReturnVehicleById() throws Exception {
+
+        VehicleResponse response = VehicleResponse.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleService.getVehicleById(1L))
+                .thenReturn(response);
+
+        mockMvc.perform(get("/api/vehicles/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.make").value("Toyota"))
+                .andExpect(jsonPath("$.model").value("Fortuner"))
+                .andExpect(jsonPath("$.category").value("SUV"))
+                .andExpect(jsonPath("$.price").value(4200000))
+                .andExpect(jsonPath("$.quantityInStock").value(5));
+    }
+
+    @Test
+    @WithMockUser
+    void shouldUpdateVehicleSuccessfully() throws Exception {
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Toyota")
+                .model("Fortuner Legender")
+                .category("SUV")
+                .price(new BigDecimal("4500000"))
+                .quantityInStock(8)
+                .build();
+
+        VehicleResponse response = VehicleResponse.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner Legender")
+                .category("SUV")
+                .price(new BigDecimal("4500000"))
+                .quantityInStock(8)
+                .build();
+
+        when(vehicleService.updateVehicle(eq(1L), any(VehicleRequest.class)))
+                .thenReturn(response);
+
+        mockMvc.perform(put("/api/vehicles/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.make").value("Toyota"))
+                .andExpect(jsonPath("$.model").value("Fortuner Legender"))
+                .andExpect(jsonPath("$.category").value("SUV"))
+                .andExpect(jsonPath("$.price").value(4500000))
+                .andExpect(jsonPath("$.quantityInStock").value(8));
+    }
 }
 
 
