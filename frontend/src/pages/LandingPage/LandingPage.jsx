@@ -38,7 +38,7 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <nav className={styles.nav}>
-        <Link to="/home" className={styles.logo}>
+        <Link to="/welcome" className={styles.logo}>
           <span className={styles.logoIcon}>AV</span>
           <span>AutoVault</span>
         </Link>

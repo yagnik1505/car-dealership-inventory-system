@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -19,13 +19,8 @@ import styles from './VehicleDetails.module.css';
 
 export default function VehicleDetails() {
   const navigate = useNavigate();
-  const { vehicle, loading, error, fetchVehicle } = useVehicle(window.location.pathname.split('/').pop());
-  const id = window.location.pathname.split('/').pop();
-  const { vehicle: vehicleData, loading: vehicleLoading, error: vehicleError, fetchVehicle: refetch } = useVehicle(id);
-
-  const vehicleToShow = vehicleData;
-  const isLoading = vehicleLoading;
-  const hasError = vehicleError;
+  const { id } = useParams();
+  const { vehicle: vehicleToShow, loading: isLoading, error: hasError, fetchVehicle: refetch } = useVehicle(id);
 
   const { openUpdate, openDelete, openPurchase, openRestock, modals } =
     useVehicleModals(refetch);

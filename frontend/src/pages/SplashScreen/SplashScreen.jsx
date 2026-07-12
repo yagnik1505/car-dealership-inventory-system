@@ -20,7 +20,7 @@ export default function SplashScreen() {
     }, 40);
 
     const timer = setTimeout(() => {
-      navigate('/home');
+      navigate('/welcome');
     }, 2200);
 
     return () => {

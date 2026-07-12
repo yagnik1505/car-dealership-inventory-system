@@ -55,8 +55,8 @@ export default function VehicleForm({ initialData, onSubmit, loading, submitLabe
 
     onSubmit({
       make: form.make.trim(),
-      model: form.model.trim() || null,
-      category: form.category || null,
+      model: form.model.trim(),
+      category: form.category,
       price: Number(form.price),
       quantityInStock: Number(form.quantityInStock),
     });

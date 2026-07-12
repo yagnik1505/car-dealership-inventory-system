@@ -58,6 +58,11 @@ textarea {
   font-size: inherit;
 }
 
+option {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
 img {
   max-width: 100%;
   display: block;
