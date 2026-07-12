@@ -1,5 +1,6 @@
 package com.yagnik.cardealership.vehicle.controller;
 
+import com.yagnik.cardealership.vehicle.dto.InventoryRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.service.VehicleService;
@@ -88,5 +89,14 @@ public class VehicleController {
             @PathVariable Long id) {
 
         return ResponseEntity.ok(vehicleService.purchaseVehicle(id));
+    }
+
+    @PostMapping("/{id}/restock")
+    public ResponseEntity<VehicleResponse> restockVehicle(
+            @PathVariable Long id,
+            @Valid @RequestBody InventoryRequest request) {
+
+        return ResponseEntity.ok(
+                vehicleService.restockVehicle(id, request.getQuantity()));
     }
 }
