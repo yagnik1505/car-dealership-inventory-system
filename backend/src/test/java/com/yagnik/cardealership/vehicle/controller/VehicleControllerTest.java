@@ -202,6 +202,31 @@ class VehicleControllerTest {
                         .with(csrf()))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @WithMockUser
+    void shouldSearchVehicleByMake() throws Exception {
+
+        List<VehicleResponse> vehicles = List.of(
+                VehicleResponse.builder()
+                        .id(1L)
+                        .make("Toyota")
+                        .model("Fortuner")
+                        .category("SUV")
+                        .price(new BigDecimal("4200000"))
+                        .quantityInStock(5)
+                        .build()
+        );
+
+        when(vehicleService.searchByMake("Toyota"))
+                .thenReturn(vehicles);
+
+        mockMvc.perform(get("/api/vehicles/search")
+                        .param("make", "Toyota"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].make").value("Toyota"));
+    }
 }
 
 
