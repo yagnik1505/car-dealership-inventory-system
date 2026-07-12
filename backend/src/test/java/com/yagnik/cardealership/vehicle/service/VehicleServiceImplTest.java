@@ -359,4 +359,33 @@ class VehicleServiceImplTest {
                 new BigDecimal("4000000"),
                 new BigDecimal("4500000"));
     }
+
+    @Test
+    void shouldPurchaseVehicleSuccessfully() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        when(vehicleRepository.save(any(Vehicle.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        VehicleResponse response =
+                vehicleService.purchaseVehicle(1L);
+
+        assertNotNull(response);
+
+        assertEquals(4, response.getQuantityInStock());
+
+        verify(vehicleRepository).findById(1L);
+        verify(vehicleRepository).save(any(Vehicle.class));
+    }
 }
