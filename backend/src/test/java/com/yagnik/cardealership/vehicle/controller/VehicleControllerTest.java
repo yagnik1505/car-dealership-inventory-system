@@ -22,6 +22,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import java.util.List;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 @WebMvcTest(VehicleController.class)
 @Import(SecurityConfig.class)
@@ -90,6 +93,38 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$.category").value("SUV"))
                 .andExpect(jsonPath("$.price").value(4200000))
                 .andExpect(jsonPath("$.quantityInStock").value(5));
+    }
+
+    @Test
+    @WithMockUser
+    void shouldReturnAllVehicles() throws Exception {
+
+        List<VehicleResponse> vehicles = List.of(
+                VehicleResponse.builder()
+                        .id(1L)
+                        .make("Toyota")
+                        .model("Fortuner")
+                        .category("SUV")
+                        .price(new BigDecimal("4200000"))
+                        .quantityInStock(5)
+                        .build(),
+                VehicleResponse.builder()
+                        .id(2L)
+                        .make("Honda")
+                        .model("City")
+                        .category("Sedan")
+                        .price(new BigDecimal("1500000"))
+                        .quantityInStock(10)
+                        .build()
+        );
+
+        when(vehicleService.getAllVehicles()).thenReturn(vehicles);
+
+        mockMvc.perform(get("/api/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].make").value("Toyota"))
+                .andExpect(jsonPath("$[1].make").value("Honda"));
     }
 
 }
