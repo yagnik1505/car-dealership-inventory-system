@@ -1,12 +1,11 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Bell, LogOut, User } from 'lucide-react';
+import { Menu, X, Bell, LogOut, User, Shield } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import Button from '../../ui/Button';
 import styles from './Navbar.module.css';
 
 export default function Navbar({ onMenuToggle, sidebarOpen }) {
-  const { isAuthenticated, userEmail, logout } = useAuth();
+  const { isAuthenticated, userEmail, userRole, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -39,9 +38,15 @@ export default function Navbar({ onMenuToggle, sidebarOpen }) {
           <div className={styles.userMenu}>
             <div className={styles.userInfo}>
               <div className={styles.avatar}>
-                <User size={16} />
+                <User size={18} />
               </div>
-              <span className={styles.email}>{userEmail}</span>
+              <div className={styles.userDetails}>
+                <span className={styles.email}>{userEmail}</span>
+                <span className={`${styles.roleBadge} ${styles[userRole]}`}>
+                  {userRole === 'ADMIN' && <Shield size={10} className={styles.roleIcon} />}
+                  {userRole}
+                </span>
+              </div>
             </div>
             <Button variant="ghost" size="sm" icon={LogOut} onClick={handleLogout}>
               Logout

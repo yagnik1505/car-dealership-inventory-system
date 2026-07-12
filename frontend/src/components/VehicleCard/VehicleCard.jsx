@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Car, ShoppingCart, Pencil, Trash2, PackagePlus } from 'lucide-react';
+import { ShoppingCart, Pencil, Trash2, PackagePlus } from 'lucide-react';
 import Button from '../ui/Button';
 import { formatCurrency } from '../../utils/formatters';
-import { getStockStatus, getStockLabel, getVehicleGradient } from '../../utils/vehicleHelpers';
+import { getStockStatus, getStockLabel, getVehicleImage } from '../../utils/vehicleHelpers';
 import { useAuth } from '../../context/AuthContext';
 import styles from './VehicleCard.module.css';
 
@@ -31,13 +31,16 @@ export default function VehicleCard({
     >
       <div
         className={styles.imageArea}
-        style={{ background: getVehicleGradient(vehicle.id) }}
         onClick={() => navigate(`/vehicles/${vehicle.id}`)}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => e.key === 'Enter' && navigate(`/vehicles/${vehicle.id}`)}
       >
-        <Car size={48} className={styles.carIcon} />
+        <img 
+          src={getVehicleImage(vehicle.category, vehicle.id)} 
+          alt={`${vehicle.make} ${vehicle.model}`} 
+          className={styles.carImage} 
+        />
         <div className={styles.badges}>
           {vehicle.category && (
             <span className={styles.categoryBadge}>{vehicle.category}</span>

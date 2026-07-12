@@ -4,21 +4,22 @@
   left: 0;
   width: var(--sidebar-width);
   height: calc(100vh - var(--navbar-height));
-  background: rgba(18, 18, 26, 0.95);
+  background: var(--color-bg-elevated);
   backdrop-filter: blur(20px);
   border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   z-index: var(--z-dropdown);
   transition: transform var(--transition-base);
+  box-shadow: 1px 0 2px rgba(15, 23, 42, 0.02);
 }
 
 .nav {
   flex: 1;
-  padding: 20px 12px;
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .navLink,
@@ -26,9 +27,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 11px 14px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: var(--color-text-secondary);
   transition: all var(--transition-fast);
@@ -36,28 +37,32 @@
 
 .navLink:hover,
 .homeLink:hover {
-  background: var(--color-bg-glass);
+  background: var(--color-bg-secondary);
   color: var(--color-text-primary);
+  transform: translateX(4px);
 }
 
 .active {
-  background: rgba(99, 102, 241, 0.12) !important;
-  color: var(--color-accent-light) !important;
+  background: var(--color-accent-glow) !important;
+  color: var(--color-accent) !important;
+  font-weight: 600;
+  transform: none !important;
 }
 
 .divider {
   height: 1px;
   background: var(--color-border);
-  margin: 8px 14px;
+  margin: 12px 16px;
 }
 
 .footer {
-  padding: 20px;
+  padding: 24px 20px;
   border-top: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
 }
 
 .footerText {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--color-text-muted);
 }
@@ -65,8 +70,8 @@
 .footerSub {
   font-size: 0.6875rem;
   color: var(--color-text-muted);
-  opacity: 0.7;
-  margin-top: 2px;
+  opacity: 0.8;
+  margin-top: 4px;
 }
 
 .backdrop {
@@ -87,7 +92,7 @@
     position: fixed;
     inset: 0;
     top: var(--navbar-height);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(15, 23, 42, 0.4);
     z-index: calc(var(--z-dropdown) - 1);
   }
 }
