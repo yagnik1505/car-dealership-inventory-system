@@ -284,6 +284,30 @@ class VehicleControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.make").value("Make is required"));
     }
+
+    @Test
+    @WithMockUser
+    void shouldPurchaseVehicleSuccessfully() throws Exception {
+
+        VehicleResponse response = VehicleResponse.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(4)
+                .build();
+
+        when(vehicleService.purchaseVehicle(1L))
+                .thenReturn(response);
+
+        mockMvc.perform(post("/api/vehicles/1/purchase")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.make").value("Toyota"))
+                .andExpect(jsonPath("$.quantityInStock").value(4));
+    }
 }
 
 

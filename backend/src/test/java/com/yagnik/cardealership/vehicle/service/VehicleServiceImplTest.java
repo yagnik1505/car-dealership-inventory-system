@@ -5,6 +5,7 @@ import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.entity.Vehicle;
 import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
 import com.yagnik.cardealership.vehicle.exception.VehicleNotFoundException;
+import com.yagnik.cardealership.vehicle.exception.VehicleOutOfStockException;
 import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -387,5 +388,34 @@ class VehicleServiceImplTest {
 
         verify(vehicleRepository).findById(1L);
         verify(vehicleRepository).save(any(Vehicle.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenVehicleIsOutOfStock() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(0)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        VehicleOutOfStockException exception = assertThrows(
+                VehicleOutOfStockException.class,
+                () -> vehicleService.purchaseVehicle(1L)
+        );
+
+        assertEquals(
+                "Vehicle is out of stock",
+                exception.getMessage()
+        );
+
+        verify(vehicleRepository).findById(1L);
+        verify(vehicleRepository, never()).save(any(Vehicle.class));
     }
 }
