@@ -418,4 +418,32 @@ class VehicleServiceImplTest {
         verify(vehicleRepository).findById(1L);
         verify(vehicleRepository, never()).save(any(Vehicle.class));
     }
+
+    @Test
+    void shouldRestockVehicleSuccessfully() {
+
+        Vehicle vehicle = Vehicle.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleRepository.findById(1L))
+                .thenReturn(Optional.of(vehicle));
+
+        when(vehicleRepository.save(any(Vehicle.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        VehicleResponse response =
+                vehicleService.restockVehicle(1L, 10);
+
+        assertNotNull(response);
+        assertEquals(15, response.getQuantityInStock());
+
+        verify(vehicleRepository).findById(1L);
+        verify(vehicleRepository).save(any(Vehicle.class));
+    }
 }
