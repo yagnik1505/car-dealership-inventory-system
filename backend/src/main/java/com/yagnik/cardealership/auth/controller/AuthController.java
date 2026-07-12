@@ -1,5 +1,7 @@
 package com.yagnik.cardealership.auth.controller;
 
+import com.yagnik.cardealership.auth.dto.LoginRequest;
+import com.yagnik.cardealership.auth.dto.LoginResponse;
 import com.yagnik.cardealership.auth.dto.RegisterRequest;
 import com.yagnik.cardealership.auth.dto.RegisterResponse;
 import com.yagnik.cardealership.auth.service.AuthService;
@@ -26,4 +28,14 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+
+        LoginResponse response = authService.login(request);
+
+        return ResponseEntity.ok(response);
+    }
 }
+
