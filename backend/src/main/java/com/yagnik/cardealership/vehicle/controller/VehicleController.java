@@ -20,8 +20,9 @@ public class VehicleController {
     public ResponseEntity<VehicleResponse> addVehicle(
             @Valid @RequestBody VehicleRequest request) {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(vehicleService.addVehicle(request));
+        VehicleResponse response = vehicleService.addVehicle(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(response);
     }
 }
