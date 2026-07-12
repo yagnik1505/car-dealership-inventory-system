@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yagnik.cardealership.auth.security.SecurityConfig;
 import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
+import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
+import com.yagnik.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.yagnik.cardealership.vehicle.service.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +22,12 @@ import java.math.BigDecimal;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(VehicleController.class)
 @Import(SecurityConfig.class)
@@ -226,6 +227,62 @@ class VehicleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].make").value("Toyota"));
+    }
+
+    @Test
+    @WithMockUser
+    void shouldReturnNotFoundWhenVehicleDoesNotExist() throws Exception {
+
+        when(vehicleService.getVehicleById(100L))
+                .thenThrow(new VehicleNotFoundException("Vehicle not found"));
+
+        mockMvc.perform(get("/api/vehicles/100"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Vehicle not found"));
+    }
+
+    @Test
+    @WithMockUser
+    void shouldReturnConflictWhenVehicleAlreadyExists() throws Exception {
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        when(vehicleService.addVehicle(any(VehicleRequest.class)))
+                .thenThrow(new DuplicateVehicleException("Vehicle already exists"));
+
+        mockMvc.perform(post("/api/vehicles")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(content().string("Vehicle already exists"));
+    }
+
+
+    @Test
+    @WithMockUser
+    void shouldReturnBadRequestWhenValidationFails() throws Exception {
+
+        VehicleRequest request = VehicleRequest.builder()
+                .make("")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(5)
+                .build();
+
+        mockMvc.perform(post("/api/vehicles")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Make is required")));
     }
 }
 
