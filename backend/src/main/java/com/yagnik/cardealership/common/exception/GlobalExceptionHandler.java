@@ -2,6 +2,7 @@ package com.yagnik.cardealership.common.exception;
 
 import com.yagnik.cardealership.auth.exception.EmailAlreadyExistsException;
 import com.yagnik.cardealership.auth.exception.InvalidCredentialsException;
+import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
 import com.yagnik.cardealership.vehicle.exception.VehicleNotFoundException;
 import com.yagnik.cardealership.vehicle.exception.VehicleOutOfStockException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -64,6 +65,22 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(DuplicateVehicleException.class)
+    public ResponseEntity<ApiError> handleDuplicateVehicle(
+            DuplicateVehicleException ex,
+            HttpServletRequest request) {
+
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(VehicleOutOfStockException.class)
