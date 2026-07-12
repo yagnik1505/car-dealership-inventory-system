@@ -30,8 +30,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.yagnik.cardealership.auth.security.ApplicationConfig;
+import com.yagnik.cardealership.auth.security.JwtAuthenticationFilter;
+import com.yagnik.cardealership.auth.security.JwtService;
+import com.yagnik.cardealership.auth.security.CustomUserDetailsService;
+
 @WebMvcTest(VehicleController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, ApplicationConfig.class, JwtAuthenticationFilter.class})
 class VehicleControllerTest {
 
     @Autowired
@@ -40,11 +45,17 @@ class VehicleControllerTest {
     @MockBean
     VehicleService vehicleService;
 
+    @MockBean
+    JwtService jwtService;
+
+    @MockBean
+    CustomUserDetailsService customUserDetailsService;
+
     @Autowired
     ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldRejectBlankMake() throws Exception {
 
         VehicleRequest request = VehicleRequest.builder()
@@ -63,7 +74,7 @@ class VehicleControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldCreateVehicleSuccessfully() throws Exception {
 
         VehicleRequest request = VehicleRequest.builder()
@@ -158,7 +169,7 @@ class VehicleControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldUpdateVehicleSuccessfully() throws Exception {
 
         VehicleRequest request = VehicleRequest.builder()
@@ -195,7 +206,7 @@ class VehicleControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldDeleteVehicleSuccessfully() throws Exception {
 
         doNothing().when(vehicleService).deleteVehicle(1L);
@@ -239,11 +250,11 @@ class VehicleControllerTest {
 
         mockMvc.perform(get("/api/vehicles/100"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Vehicle not found"));
+                .andExpect(jsonPath("$.message").value("Vehicle not found"));
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldReturnConflictWhenVehicleAlreadyExists() throws Exception {
 
         VehicleRequest request = VehicleRequest.builder()
@@ -262,12 +273,12 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("Vehicle already exists"));
+                .andExpect(jsonPath("$.message").value("Vehicle already exists"));
     }
 
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldReturnBadRequestWhenValidationFails() throws Exception {
 
         VehicleRequest request = VehicleRequest.builder()
@@ -283,7 +294,7 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.make").value("Make is required"));
+                .andExpect(jsonPath("$.message").value("Make is required"));
     }
 
     @Test
@@ -312,7 +323,7 @@ class VehicleControllerTest {
 
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void shouldRestockVehicleSuccessfully() throws Exception {
 
         InventoryRequest request = InventoryRequest.builder()

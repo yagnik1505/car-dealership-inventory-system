@@ -8,10 +8,12 @@ import { SkeletonGrid } from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import { useVehicles } from '../../hooks/useVehicles';
 import { Car } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import styles from './VehicleList.module.css';
 
 export default function VehicleList() {
   const { vehicles, loading, fetchVehicles } = useVehicles();
+  const { userRole } = useAuth();
   const { openUpdate, openDelete, openPurchase, openRestock, modals } =
     useVehicleModals(fetchVehicles);
 
@@ -24,11 +26,13 @@ export default function VehicleList() {
             {loading ? 'Loading...' : `${vehicles.length} vehicle${vehicles.length !== 1 ? 's' : ''} in stock`}
           </p>
         </div>
-        <Link to="/vehicles/add">
-          <Button variant="primary" icon={PlusCircle}>
-            Add Vehicle
-          </Button>
-        </Link>
+        {userRole === 'ADMIN' && (
+          <Link to="/vehicles/add">
+            <Button variant="primary" icon={PlusCircle}>
+              Add Vehicle
+            </Button>
+          </Link>
+        )}
       </div>
 
       {loading ? (
@@ -38,8 +42,8 @@ export default function VehicleList() {
           icon={Car}
           title="No vehicles yet"
           description="Start building your inventory by adding your first vehicle."
-          actionLabel="Add Vehicle"
-          onAction={() => window.location.href = '/vehicles/add'}
+          actionLabel={userRole === 'ADMIN' ? "Add Vehicle" : "Go to Dashboard"}
+          onAction={() => window.location.href = userRole === 'ADMIN' ? '/vehicles/add' : '/dashboard'}
         />
       ) : (
         <div className={styles.grid}>

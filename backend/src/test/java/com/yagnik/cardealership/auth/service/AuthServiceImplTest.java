@@ -249,7 +249,7 @@ class AuthServiceImplTest {
                 user.getPassword()))
                 .thenReturn(true);
 
-        when(jwtService.generateToken(request.getEmail()))
+        when(jwtService.generateToken(user))
                 .thenReturn("jwt-token");
 
         LoginResponse response = authService.login(request);
@@ -258,6 +258,6 @@ class AuthServiceImplTest {
 
         assertEquals("jwt-token", response.getToken());
 
-        verify(jwtService).generateToken(request.getEmail());
+        verify(jwtService).generateToken(user);
     }
 }

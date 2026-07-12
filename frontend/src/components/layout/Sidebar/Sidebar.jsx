@@ -6,16 +6,23 @@ import {
   PlusCircle,
   Home,
 } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import styles from './Sidebar.module.css';
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/vehicles', icon: Car, label: 'Inventory' },
   { to: '/search', icon: Search, label: 'Search' },
-  { to: '/vehicles/add', icon: PlusCircle, label: 'Add Vehicle' },
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
+  const { userRole } = useAuth();
+  
+  const items = [...navItems];
+  if (userRole === 'ADMIN') {
+    items.push({ to: '/vehicles/add', icon: PlusCircle, label: 'Add Vehicle' });
+  }
+
   return (
     <>
       {isOpen && <div className={styles.backdrop} onClick={onClose} />}
@@ -28,7 +35,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           <div className={styles.divider} />
 
-          {navItems.map(({ to, icon: Icon, label }) => (
+          {items.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}

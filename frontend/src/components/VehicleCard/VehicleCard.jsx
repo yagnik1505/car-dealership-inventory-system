@@ -4,6 +4,7 @@ import { Car, ShoppingCart, Pencil, Trash2, PackagePlus } from 'lucide-react';
 import Button from '../ui/Button';
 import { formatCurrency } from '../../utils/formatters';
 import { getStockStatus, getStockLabel, getVehicleGradient } from '../../utils/vehicleHelpers';
+import { useAuth } from '../../context/AuthContext';
 import styles from './VehicleCard.module.css';
 
 export default function VehicleCard({
@@ -16,6 +17,7 @@ export default function VehicleCard({
   showActions = true,
 }) {
   const navigate = useNavigate();
+  const { userRole } = useAuth();
   const stockStatus = getStockStatus(vehicle.quantityInStock);
   const isOutOfStock = vehicle.quantityInStock === 0;
 
@@ -76,28 +78,32 @@ export default function VehicleCard({
               >
                 Buy
               </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                icon={Pencil}
-                onClick={() => onUpdate?.(vehicle)}
-              >
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                icon={PackagePlus}
-                onClick={() => onRestock?.(vehicle)}
-              >
-                Restock
-              </Button>
-              <Button
-                size="sm"
-                variant="danger"
-                icon={Trash2}
-                onClick={() => onDelete?.(vehicle)}
-              />
+              {userRole === 'ADMIN' && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    icon={Pencil}
+                    onClick={() => onUpdate?.(vehicle)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    icon={PackagePlus}
+                    onClick={() => onRestock?.(vehicle)}
+                  >
+                    Restock
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    icon={Trash2}
+                    onClick={() => onDelete?.(vehicle)}
+                  />
+                </>
+              )}
             </div>
           )}
         </div>

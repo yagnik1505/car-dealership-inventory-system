@@ -21,8 +21,13 @@ import org.springframework.context.annotation.Import;
 import com.yagnik.cardealership.auth.security.SecurityConfig;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import com.yagnik.cardealership.auth.security.ApplicationConfig;
+import com.yagnik.cardealership.auth.security.JwtAuthenticationFilter;
+import com.yagnik.cardealership.auth.security.JwtService;
+import com.yagnik.cardealership.auth.security.CustomUserDetailsService;
+
 @WebMvcTest(AuthController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, ApplicationConfig.class, JwtAuthenticationFilter.class})
 class AuthControllerTest {
 
     @Autowired
@@ -30,6 +35,12 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

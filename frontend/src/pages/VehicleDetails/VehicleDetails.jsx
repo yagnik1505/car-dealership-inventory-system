@@ -15,11 +15,13 @@ import { useVehicleModals } from '../../components/VehicleModals';
 import { useVehicle } from '../../hooks/useVehicles';
 import { formatCurrency } from '../../utils/formatters';
 import { getStockStatus, getStockLabel, getVehicleGradient } from '../../utils/vehicleHelpers';
+import { useAuth } from '../../context/AuthContext';
 import styles from './VehicleDetails.module.css';
 
 export default function VehicleDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { userRole } = useAuth();
   const { vehicle: vehicleToShow, loading: isLoading, error: hasError, fetchVehicle: refetch } = useVehicle(id);
 
   const { openUpdate, openDelete, openPurchase, openRestock, modals } =
@@ -118,27 +120,31 @@ export default function VehicleDetails() {
             >
               {isOutOfStock ? 'Out of Stock' : 'Purchase'}
             </Button>
-            <Button
-              variant="secondary"
-              icon={Pencil}
-              onClick={() => openUpdate(vehicleToShow)}
-            >
-              Update
-            </Button>
-            <Button
-              variant="success"
-              icon={PackagePlus}
-              onClick={() => openRestock(vehicleToShow)}
-            >
-              Restock
-            </Button>
-            <Button
-              variant="danger"
-              icon={Trash2}
-              onClick={() => openDelete(vehicleToShow)}
-            >
-              Delete
-            </Button>
+            {userRole === 'ADMIN' && (
+              <>
+                <Button
+                  variant="secondary"
+                  icon={Pencil}
+                  onClick={() => openUpdate(vehicleToShow)}
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="success"
+                  icon={PackagePlus}
+                  onClick={() => openRestock(vehicleToShow)}
+                >
+                  Restock
+                </Button>
+                <Button
+                  variant="danger"
+                  icon={Trash2}
+                  onClick={() => openDelete(vehicleToShow)}
+                >
+                  Delete
+                </Button>
+              </>
+            )}
           </div>
         </motion.div>
       </div>

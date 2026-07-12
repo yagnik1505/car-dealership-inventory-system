@@ -1,5 +1,13 @@
 import api from './api';
 
+export const decodeToken = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 const authService = {
   register: async ({ name, email, password }) => {
     const response = await api.post('/api/auth/register', {
@@ -21,6 +29,7 @@ const authService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
   },
 
   getToken: () => localStorage.getItem('token'),

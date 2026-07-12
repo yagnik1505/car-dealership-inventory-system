@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
@@ -16,6 +16,21 @@ import AddVehicle from './pages/AddVehicle';
 import SearchVehicles from './pages/SearchVehicles';
 import NotFound from './pages/NotFound';
 
+function ProtectedRoute({ children, allowedRoles }) {
+  const { isAuthenticated, userRole } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -31,11 +46,31 @@ export default function App() {
             </Route>
 
             <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/vehicles" element={<VehicleList />} />
-              <Route path="/vehicles/add" element={<AddVehicle />} />
-              <Route path="/vehicles/:id" element={<VehicleDetails />} />
-              <Route path="/search" element={<SearchVehicles />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/vehicles" element={
+                <ProtectedRoute>
+                  <VehicleList />
+                </ProtectedRoute>
+              } />
+              <Route path="/vehicles/add" element={
+                <ProtectedRoute allowedRoles={['ADMIN']}>
+                  <AddVehicle />
+                </ProtectedRoute>
+              } />
+              <Route path="/vehicles/:id" element={
+                <ProtectedRoute>
+                  <VehicleDetails />
+                </ProtectedRoute>
+              } />
+              <Route path="/search" element={
+                <ProtectedRoute>
+                  <SearchVehicles />
+                </ProtectedRoute>
+              } />
             </Route>
 
             <Route path="*" element={<NotFound />} />

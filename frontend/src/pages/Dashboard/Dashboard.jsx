@@ -18,10 +18,12 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { useVehicles } from '../../hooks/useVehicles';
 import { computeStats } from '../../utils/vehicleHelpers';
 import { formatCurrency } from '../../utils/formatters';
+import { useAuth } from '../../context/AuthContext';
 import styles from './Dashboard.module.css';
 
 export default function Dashboard() {
   const { vehicles, loading } = useVehicles();
+  const { userRole } = useAuth();
   const stats = useMemo(() => computeStats(vehicles), [vehicles]);
   const recentVehicles = useMemo(() => vehicles.slice(0, 4), [vehicles]);
 
@@ -45,11 +47,13 @@ export default function Dashboard() {
           <h1 className={styles.title}>Dashboard</h1>
           <p className={styles.subtitle}>Overview of your dealership inventory</p>
         </div>
-        <Link to="/vehicles/add">
-          <Button variant="primary" icon={PlusCircle}>
-            Add Vehicle
-          </Button>
-        </Link>
+        {userRole === 'ADMIN' && (
+          <Link to="/vehicles/add">
+            <Button variant="primary" icon={PlusCircle}>
+              Add Vehicle
+            </Button>
+          </Link>
+        )}
       </div>
 
       <div className={styles.statsGrid}>
@@ -131,14 +135,16 @@ export default function Dashboard() {
         >
           <h2 className={styles.panelTitle}>Quick Actions</h2>
           <div className={styles.actions}>
-            <Link to="/vehicles/add" className={styles.actionCard}>
-              <PlusCircle size={24} />
-              <div>
-                <span className={styles.actionTitle}>Add Vehicle</span>
-                <span className={styles.actionDesc}>Add new inventory</span>
-              </div>
-              <ArrowRight size={18} className={styles.actionArrow} />
-            </Link>
+            {userRole === 'ADMIN' && (
+              <Link to="/vehicles/add" className={styles.actionCard}>
+                <PlusCircle size={24} />
+                <div>
+                  <span className={styles.actionTitle}>Add Vehicle</span>
+                  <span className={styles.actionDesc}>Add new inventory</span>
+                </div>
+                <ArrowRight size={18} className={styles.actionArrow} />
+              </Link>
+            )}
             <Link to="/search" className={styles.actionCard}>
               <Search size={24} />
               <div>
