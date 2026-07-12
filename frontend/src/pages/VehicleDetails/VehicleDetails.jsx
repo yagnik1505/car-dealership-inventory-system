@@ -14,7 +14,7 @@ import EmptyState from '../../components/ui/EmptyState';
 import { useVehicleModals } from '../../components/VehicleModals';
 import { useVehicle } from '../../hooks/useVehicles';
 import { formatCurrency } from '../../utils/formatters';
-import { getStockStatus, getStockLabel, getVehicleGradient } from '../../utils/vehicleHelpers';
+import { getStockStatus, getStockLabel, getVehicleImage } from '../../utils/vehicleHelpers';
 import { useAuth } from '../../context/AuthContext';
 import styles from './VehicleDetails.module.css';
 
@@ -60,11 +60,14 @@ export default function VehicleDetails() {
       <div className={styles.layout}>
         <motion.div
           className={styles.imageSection}
-          style={{ background: getVehicleGradient(vehicleToShow.id) }}
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Car size={80} className={styles.carIcon} />
+          <img 
+            src={getVehicleImage(vehicleToShow.category, vehicleToShow.id)} 
+            alt={`${vehicleToShow.make} ${vehicleToShow.model}`} 
+            className={styles.carImage} 
+          />
           <div className={styles.imageBadges}>
             {vehicleToShow.category && (
               <span className={styles.categoryBadge}>{vehicleToShow.category}</span>
@@ -117,6 +120,7 @@ export default function VehicleDetails() {
               icon={ShoppingCart}
               disabled={isOutOfStock}
               onClick={() => openPurchase(vehicleToShow)}
+              className={styles.actionBtn}
             >
               {isOutOfStock ? 'Out of Stock' : 'Purchase'}
             </Button>
@@ -126,6 +130,7 @@ export default function VehicleDetails() {
                   variant="secondary"
                   icon={Pencil}
                   onClick={() => openUpdate(vehicleToShow)}
+                  className={styles.actionBtn}
                 >
                   Update
                 </Button>
@@ -133,6 +138,7 @@ export default function VehicleDetails() {
                   variant="success"
                   icon={PackagePlus}
                   onClick={() => openRestock(vehicleToShow)}
+                  className={styles.actionBtn}
                 >
                   Restock
                 </Button>
@@ -140,6 +146,7 @@ export default function VehicleDetails() {
                   variant="danger"
                   icon={Trash2}
                   onClick={() => openDelete(vehicleToShow)}
+                  className={styles.actionBtn}
                 >
                   Delete
                 </Button>

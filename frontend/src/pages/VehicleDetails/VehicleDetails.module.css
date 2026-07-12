@@ -26,24 +26,33 @@
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
 }
 
-.carIcon {
-  color: white;
-  opacity: 0.9;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+.carImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.imageSection:hover .carImage {
+  transform: scale(1.05);
 }
 
 .imageBadges {
   position: absolute;
   top: 1.5rem;
-  right: 1.5rem;
+  left: 1.5rem;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5rem;
 }
 
 .categoryBadge {
-  background: var(--color-bg-glass);
+  background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(8px);
   color: white;
   padding: 0.25rem 0.75rem;
@@ -51,28 +60,33 @@
   font-size: 0.875rem;
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .stockBadge {
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-full);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
 }
 
-.stockBadge.inStock {
-  background: var(--color-success-bg);
-  color: var(--color-success);
+.stockBadge.in-stock {
+  background: rgba(34, 197, 94, 0.9);
+  color: white;
 }
 
-.stockBadge.lowStock {
-  background: var(--color-warning-bg);
-  color: var(--color-warning);
+.stockBadge.low-stock {
+  background: rgba(245, 158, 11, 0.9);
+  color: white;
 }
 
-.stockBadge.outOfStock {
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
+.stockBadge.out-of-stock {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
 }
 
 .details {
@@ -85,12 +99,13 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
 }
 
 .price {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-accent-light);
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-accent);
   margin-bottom: 2rem;
 }
 
@@ -98,11 +113,12 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  background: var(--color-bg-secondary);
+  background: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .metaItem {
@@ -113,7 +129,7 @@
 
 .metaLabel {
   font-size: 0.875rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
@@ -121,7 +137,7 @@
 
 .metaValue {
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-primary);
 }
 
@@ -130,6 +146,10 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-top: auto;
+}
+
+.actionBtn {
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 992px) {

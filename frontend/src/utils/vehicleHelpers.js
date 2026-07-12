@@ -61,16 +61,46 @@ export const computeStats = (vehicles) => {
   return { total, available, outOfStock, lowStock, totalValue };
 };
 
-export const getVehicleGradient = (id) => {
-  const gradients = [
-    'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)',
-    'linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #2563eb 100%)',
-    'linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%)',
-    'linear-gradient(135deg, #431407 0%, #7c2d12 50%, #c2410c 100%)',
-    'linear-gradient(135deg, #500724 0%, #831843 50%, #be185d 100%)',
-    'linear-gradient(135deg, #1e1b4b 0%, #581c87 50%, #7e22ce 100%)',
-  ];
-  return gradients[(id || 0) % gradients.length];
+export const getVehicleImage = (category, id) => {
+  const c = category?.toLowerCase() || 'default';
+  const images = {
+    suv: [
+      'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?q=80&w=2071&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=2070&auto=format&fit=crop'
+    ],
+    sedan: [
+      'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=2064&auto=format&fit=crop'
+    ],
+    sports: [
+      'https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?q=80&w=2064&auto=format&fit=crop'
+    ],
+    electric: [
+      'https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2072&auto=format&fit=crop'
+    ],
+    luxury: [
+      'https://images.unsplash.com/photo-1503376710777-62f7902d8471?q=80&w=2069&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?q=80&w=2115&auto=format&fit=crop'
+    ],
+    truck: [
+      'https://images.unsplash.com/photo-1559416523-140ddc3d238c?q=80&w=2069&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1581622378964-b04b90e3cb36?q=80&w=2073&auto=format&fit=crop'
+    ],
+    coupe: [
+      'https://images.unsplash.com/photo-1609521263047-f8f205293f24?q=80&w=2070&auto=format&fit=crop'
+    ],
+    hatchback: [
+      'https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2069&auto=format&fit=crop'
+    ],
+    default: [
+      'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=2070&auto=format&fit=crop'
+    ]
+  };
+
+  const list = images[c] || images.default;
+  return list[(id || 0) % list.length];
 };
 
 export const buildSearchParams = (filters) => {

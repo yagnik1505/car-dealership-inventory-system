@@ -54,7 +54,12 @@ export default function LandingPage() {
 
       <section className={styles.hero}>
         <div className={styles.heroBackground}>
-          <div className={styles.gridPattern} />
+          <img 
+            src="https://images.unsplash.com/photo-1617531653332-bd46c24f2068?q=80&w=2115&auto=format&fit=crop" 
+            alt="Premium Car" 
+            className={styles.heroImage}
+          />
+          <div className={styles.heroOverlay} />
         </div>
 
         <motion.div
@@ -91,46 +96,6 @@ export default function LandingPage() {
                 Browse Inventory
               </Button>
             </Link>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className={styles.heroVisual}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <div className={styles.dashboardPreview}>
-            <div className={styles.previewHeader}>
-              <div className={styles.previewDots}>
-                <span /><span /><span />
-              </div>
-            </div>
-            <div className={styles.previewStats}>
-              <div className={styles.previewStat}>
-                <span className={styles.statLabel}>Total Vehicles</span>
-                <span className={styles.statValue}>248</span>
-              </div>
-              <div className={styles.previewStat}>
-                <span className={styles.statLabel}>Available</span>
-                <span className={styles.statValue}>186</span>
-              </div>
-              <div className={styles.previewStat}>
-                <span className={styles.statLabel}>Portfolio Value</span>
-                <span className={styles.statValue}>$12.4M</span>
-              </div>
-            </div>
-            <div className={styles.previewCards}>
-              {[1, 2, 3].map((i) => (
-                <div key={i} className={styles.previewCard}>
-                  <div className={styles.previewCardImage} />
-                  <div className={styles.previewCardInfo}>
-                    <div className={styles.previewCardLine} />
-                    <div className={styles.previewCardLineShort} />
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </motion.div>
       </section>
