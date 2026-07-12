@@ -158,4 +158,20 @@ public class VehicleServiceImpl implements VehicleService {
 
         return mapToResponse(updatedVehicle);
     }
+
+    @Override
+    public VehicleResponse restockVehicle(Long id,
+                                          Integer quantity) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        vehicle.setQuantityInStock(
+                vehicle.getQuantityInStock() + quantity);
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return mapToResponse(updatedVehicle);
+    }
 }

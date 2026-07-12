@@ -16,7 +16,7 @@ public interface VehicleService {
     List<VehicleResponse> searchByMake(String make);
 
     List<VehicleResponse> searchByCategory(String category);
-
+    VehicleResponse restockVehicle(Long id, Integer quantity);
     List<VehicleResponse> searchByModel(String model);
     VehicleResponse purchaseVehicle(Long id);
     List<VehicleResponse> searchByPriceRange(BigDecimal minPrice,BigDecimal maxPrice);
