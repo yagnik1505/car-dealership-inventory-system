@@ -282,7 +282,7 @@ class VehicleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Make is required")));
+                .andExpect(jsonPath("$.make").value("Make is required"));
     }
 }
 
