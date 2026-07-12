@@ -9,6 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.yagnik.cardealership.auth.entity.User;
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class JwtService {
 
@@ -19,22 +23,27 @@ public class JwtService {
             Keys.hmacShaKeyFor(
                     SECRET.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(String email) {
+    public String generateToken(User user) {
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole().name());
 
         return Jwts.builder()
-
-                .subject(email)
-
+                .claims(claims)
+                .subject(user.getEmail())
                 .issuedAt(new Date())
-
                 .expiration(
                         new Date(System.currentTimeMillis()
-                                + 1000 * 60 * 60 * 24)
+                                + 1000L * 60 * 60 * 24)
                 )
-
                 .signWith(key)
-
                 .compact();
+    }
+
+    public String extractRole(String token) {
+
+        return extractAllClaims(token)
+                .get("role", String.class);
     }
 
     private Claims extractAllClaims(String token) {

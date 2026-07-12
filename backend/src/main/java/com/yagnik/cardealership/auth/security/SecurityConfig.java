@@ -19,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class SecurityConfig {
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -44,7 +44,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(
+    public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration)
             throws Exception {
 
