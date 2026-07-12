@@ -82,6 +82,11 @@ public class VehicleController {
 
         return ResponseEntity.ok(List.of());
     }
-}
 
-//feat(vehicle): implement update vehicle endpoint
+    @PostMapping("/{id}/purchase")
+    public ResponseEntity<VehicleResponse> purchaseVehicle(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(vehicleService.purchaseVehicle(id));
+    }
+}
