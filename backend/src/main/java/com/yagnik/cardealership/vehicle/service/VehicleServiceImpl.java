@@ -5,6 +5,7 @@ import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.entity.Vehicle;
 import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
 import com.yagnik.cardealership.vehicle.exception.VehicleNotFoundException;
+import com.yagnik.cardealership.vehicle.exception.VehicleOutOfStockException;
 import com.yagnik.cardealership.vehicle.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -137,5 +138,24 @@ public class VehicleServiceImpl implements VehicleService {
                 .price(vehicle.getPrice())
                 .quantityInStock(vehicle.getQuantityInStock())
                 .build();
+    }
+
+    @Override
+    public VehicleResponse purchaseVehicle(Long id) {
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() ->
+                        new VehicleNotFoundException("Vehicle not found"));
+
+        if (vehicle.getQuantityInStock() <= 0) {
+            throw new VehicleOutOfStockException("Vehicle is out of stock");
+        }
+
+        vehicle.setQuantityInStock(
+                vehicle.getQuantityInStock() - 1);
+
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+
+        return mapToResponse(updatedVehicle);
     }
 }

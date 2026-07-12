@@ -18,6 +18,6 @@ public interface VehicleService {
     List<VehicleResponse> searchByCategory(String category);
 
     List<VehicleResponse> searchByModel(String model);
-
+    VehicleResponse purchaseVehicle(Long id);
     List<VehicleResponse> searchByPriceRange(BigDecimal minPrice,BigDecimal maxPrice);
 }
