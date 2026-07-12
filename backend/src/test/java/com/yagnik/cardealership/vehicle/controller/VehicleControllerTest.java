@@ -2,6 +2,7 @@ package com.yagnik.cardealership.vehicle.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yagnik.cardealership.auth.security.SecurityConfig;
+import com.yagnik.cardealership.vehicle.dto.InventoryRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleRequest;
 import com.yagnik.cardealership.vehicle.dto.VehicleResponse;
 import com.yagnik.cardealership.vehicle.exception.DuplicateVehicleException;
@@ -307,6 +308,36 @@ class VehicleControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.make").value("Toyota"))
                 .andExpect(jsonPath("$.quantityInStock").value(4));
+    }
+
+
+    @Test
+    @WithMockUser
+    void shouldRestockVehicleSuccessfully() throws Exception {
+
+        InventoryRequest request = InventoryRequest.builder()
+                .quantity(10)
+                .build();
+
+        VehicleResponse response = VehicleResponse.builder()
+                .id(1L)
+                .make("Toyota")
+                .model("Fortuner")
+                .category("SUV")
+                .price(new BigDecimal("4200000"))
+                .quantityInStock(15)
+                .build();
+
+        when(vehicleService.restockVehicle(1L, 10))
+                .thenReturn(response);
+
+        mockMvc.perform(post("/api/vehicles/1/restock")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.quantityInStock").value(15));
     }
 }
 
